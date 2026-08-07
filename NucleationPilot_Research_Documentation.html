@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision-Aligned Residue — Research Documentation (Nucleation Pilot &amp; Related Programs)</title>
+<style>
+  :root{
+    --ink:#14202e; --ink2:#33465c; --muted:#5b6b7d; --line:#dbe3ec; --line2:#eef2f7;
+    --bg:#ffffff; --panel:#f7f9fc; --accent:#1d4ed8; --accent2:#2563eb;
+    --dec:#1d4ed8; --cpl:#d97706; --undet:#94a3b8; --pos:#0f766e; --neg:#b91c1c;
+    --grid:#e7edf4;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    font-size:16.5px; line-height:1.62;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:56px 30px 90px}
+  h1,h2,h3,h4,.kicker,.tag,th,.tile-n,.step-h{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  h1{font-size:30px; line-height:1.2; margin:0 0 6px; letter-spacing:-.01em}
+  h2{font-size:22px; margin:52px 0 10px; padding-bottom:7px; border-bottom:2px solid var(--ink); letter-spacing:-.01em}
+  h3{font-size:17.5px; margin:26px 0 6px; color:var(--ink)}
+  h4{font-size:14px; margin:20px 0 6px; color:var(--ink2); text-transform:uppercase; letter-spacing:.05em}
+  p{margin:10px 0}
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .kicker{font-size:12.5px; text-transform:uppercase; letter-spacing:.16em; color:var(--accent); font-weight:700}
+  .sub{color:var(--muted); font-size:14.5px; margin-top:2px}
+  .meta{font-size:13px; color:var(--muted); margin-top:18px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:12px 0; line-height:1.7}
+  .meta b{color:var(--ink2)}
+  .lede{font-size:17.5px; color:var(--ink2); margin:22px 0}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin:18px 0}
+  .panel.warn{background:#fff8f0; border-color:#f4d9b8}
+  .panel.integrity{background:#f3f7ff; border-color:#cfe0ff}
+  .small{font-size:13.5px; color:var(--muted)}
+  figure{margin:22px 0; padding:0}
+  figcaption{font-size:13px; color:var(--muted); margin-top:8px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  figcaption b{color:var(--ink2)}
+  svg{max-width:100%; height:auto; display:block}
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:14px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  th,td{border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top}
+  th{background:#eef3f9; font-size:12.5px; letter-spacing:.02em}
+  td.n,th.n{text-align:right; font-variant-numeric:tabular-nums}
+  .tiles{display:flex; flex-wrap:wrap; gap:12px; margin:20px 0}
+  .tile{flex:1 1 150px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px}
+  .tile-n{font-size:26px; font-weight:800; color:var(--accent); line-height:1.05; letter-spacing:-.02em}
+  .tile-l{font-size:12.5px; color:var(--muted); margin-top:5px; line-height:1.4; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .flow{display:flex; flex-wrap:wrap; gap:0; align-items:stretch; margin:18px 0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .step{flex:1 1 0; min-width:120px; background:var(--panel); border:1px solid var(--line); padding:10px 12px; position:relative}
+  .step:not(:last-child){border-right:none}
+  .step-h{font-size:12px; font-weight:700; color:var(--ink); margin-bottom:3px}
+  .step-b{font-size:12px; color:var(--muted); line-height:1.4}
+  .step.good{background:#f0f7f4; border-color:#c9e6db}
+  .step.bad{background:#fdf1f1; border-color:#f0cccc}
+  .arrow{color:var(--muted); align-self:center; padding:0 4px; font-size:16px}
+  .two{display:flex; gap:14px; flex-wrap:wrap; margin:18px 0}
+  .col{flex:1 1 300px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px}
+  .col h4{margin-top:0}
+  .fwbar{background:#161f2b; color:#fff; border-radius:8px; padding:9px 14px; text-align:center; font-size:13px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; margin:12px 0; letter-spacing:.02em}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); margin:8px 0 0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .sw{display:inline-block; width:11px; height:11px; border-radius:2px; margin-right:5px; vertical-align:baseline}
+  .matrix{font-size:13px}
+  .matrix td{text-align:center; font-variant-numeric:tabular-nums; font-weight:600}
+  .matrix td.rowh{text-align:left; font-weight:700; background:#eef3f9; color:var(--ink)}
+  .cell-dec{background:#dbe6ff; color:#12327a}
+  .cell-cpl{background:#fde7c8; color:#7a4a08}
+  .cell-undet{background:#eaeef2; color:#556}
+  ul,ol{margin:10px 0; padding-left:22px}
+  li{margin:6px 0}
+  .ref{font-size:13px; color:var(--ink2)}
+  .ref li{margin:8px 0}
+  hr.soft{border:none; border-top:1px solid var(--line); margin:34px 0}
+  code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; background:#eef2f7; padding:1px 5px; border-radius:4px; color:#33465c}
+  .toc{columns:2; column-gap:34px; font-size:14px; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .toc a{color:var(--ink2)}
+  .footer-note{font-size:12px;color:var(--muted);margin-top:40px;border-top:1px solid var(--line);padding-top:14px}
+  @media (max-width:640px){ .toc{columns:1} .tile-n{font-size:22px} h1{font-size:25px} }
+  @media print{
+    body{font-size:11pt}
+    .wrap{max-width:none;padding:0 8mm}
+    h2{margin-top:26px}
+    figure,table,.flow,.two,.panel,.tiles{break-inside:avoid}
+    h2,h3{break-after:avoid}
+    a{color:var(--ink)}
+    .no-print{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">Research Documentation · White-box interpretability of persistent manipulation</div>
+<h1>Decision-Aligned Residue: A Frozen Detector, Its Cross-Family Transfer, and the Lessons of Getting There</h1>
+<div class="sub">Nucleation Pilot &amp; Related Projects — consolidated technical record, prepared first for Anthropic.</div>
+
+<div class="meta">
+<b>Author:</b> Christopher Blake Head (Navigator's Log R&amp;D) · ORCID 0009-0004-2308-6051 &nbsp;·&nbsp; <b>Compiled:</b> 2026-08-07<br>
+<b>DOI:</b> <a href="https://doi.org/10.5281/zenodo.21843505">10.5281/zenodo.21843505</a> (Zenodo) &nbsp;·&nbsp; sibling study Silly Donkey: 10.5281/zenodo.21432676<br>
+<b>Frozen instrument:</b> <code>nucleation-detector-1.1.0</code>, SHA-256 <code>6094de97…a2934</code> — byte-identical across every run in this record<br>
+<b>Nature of this document:</b> It reports what the program has produced, how it was produced, what it taught us, and what is in the pipeline.<br>
+<b>Companion context:</b> a set of safety observations will be routed separately under the program's disclosure protocol; this report is the technical backdrop against which those are best read.
+</div>
+
+<p class="lede">One small, frozen linear detector — validated once against a toy model with a genuinely-learned refusal boundary — reads whether an early manipulation is still "live" in a language model's residual stream. This document shows that the read <b>transfers, causally and source-decoupled, to six independently-built open-weight families the detector was never fit to</b>; that it survives being carried from a designed premise to a <b>naturalistic, in-context frame</b>; that an honest attempt to extend it to real refusal-erosion returned a <b>firm null</b> we did not dress up; and that the discipline used to reach those verdicts — freeze the instrument, commit before running, publish the nulls, correct our own overclaims — is itself part of the contribution.</p>
+
+<h2>Contents</h2>
+<div class="toc">
+<a href="#s0">0 · How to read this / integrity principles</a><br>
+<a href="#s1">1 · The question and the concept</a><br>
+<a href="#s2">2 · The frozen instrument</a><br>
+<a href="#s3">3 · Toy organism &amp; detector validation</a><br>
+<a href="#s4">4 · Cross-family causal transfer (6/6)</a><br>
+<a href="#s5">5 · Owned-model, clean-room &amp; capstone</a><br>
+<a href="#s6">6 · The firm null (Config-D) and its lessons</a><br>
+<a href="#s7">7 · Naturalistic-frame clearing (Config-E)</a><br>
+<a href="#s8">8 · The black-box companion (design only)</a><br>
+<a href="#s9">9 · Lessons we may be early on</a><br>
+<a href="#s10">10 · Relevance to safe building &amp; deployment</a><br>
+<a href="#s11">11 · Pipeline (no timelines)</a><br>
+<a href="#s12">12 · Reproducibility &amp; provenance</a><br>
+<a href="#refs">References</a><br>
+</div>
+
+<h2 id="s0">0 · How to read this — the integrity principles baked into every result</h2>
+<p>Every empirical claim below was produced under a fixed set of rules. They are stated up front because they are what makes the numbers trustworthy, and because several of the program's most useful findings are consequences of the rules rather than of any single experiment.</p>
+<div class="panel integrity">
+<ul>
+<li><b>Frozen instrument.</b> The detector is hashed and never modified. All analysis machinery (effect-size statistics, ablation masks, guards) lives in a mutable <i>harness</i>; the detector's SHA-256 is identical across every run in this record. It is never tuned toward any target.</li>
+<li><b>Commit before run.</b> Each confirmatory run is preceded by a preregistration amendment that pins the exact code hash and the decision rule <i>before</i> the data exist. Estimator changes are made in the open, each committed before its run.</li>
+<li><b>Publish the nulls.</b> Negative and null results are reported with the same weight as positives (see §6, and the H-E3 monitor null in §7).</li>
+<li><b>Correct your own overclaims.</b> Where an early impression turned out to be an artifact or an overstatement, the correction is on the record — including one retracted single-model positive and two withdrawn interpretive claims.</li>
+<li><b>Firewall.</b> Distinct instruments and projects share methodology, never evidence; no result of one is read as evidence for another without a separate, preregistered joint analysis.</li>
+</ul>
+</div>
+
+<h2 id="s1">1 · The question and the concept</h2>
+<p>When a model is given a manipulation early in a context — a premise it should later drop, a frame it should revise, a stance it is asked to retract — does that manipulation leave a <b>trace in the model's internal state that remains readable after the surface behavior appears to have moved on?</b> We call the trace <b>decision-aligned residue</b>: a direction in the residual stream that reports whether the early manipulation has been <i>cleared</i> or is still <i>live</i>. The informal name for the phenomenon is "still-in-there."</p>
+
+<figure>
+<svg viewBox="0 0 780 210" role="img" aria-label="Concept diagram: an early manipulation either clears or persists, and a frozen linear axis reads which.">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#5b6b7d"/></marker>
+  </defs>
+  <!-- turns timeline -->
+  <text x="20" y="24" font-family="sans-serif" font-size="12" fill="#5b6b7d">conversation / context over turns →</text>
+  <rect x="20" y="34" width="120" height="40" rx="6" fill="#e9eefb" stroke="#cfe0ff"/>
+  <text x="80" y="52" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#12327a">manipulation</text>
+  <text x="80" y="67" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#33465c">planted early</text>
+  <line x1="140" y1="54" x2="200" y2="54" stroke="#5b6b7d" marker-end="url(#ah)"/>
+  <rect x="200" y="34" width="120" height="40" rx="6" fill="#f7f9fc" stroke="#dbe3ec"/>
+  <text x="260" y="52" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#14202e">later turns</text>
+  <text x="260" y="67" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#33465c">topically unrelated</text>
+  <line x1="320" y1="54" x2="380" y2="54" stroke="#5b6b7d" marker-end="url(#ah)"/>
+  <!-- fork -->
+  <rect x="380" y="14" width="170" height="36" rx="6" fill="#f0f7f4" stroke="#c9e6db"/>
+  <text x="465" y="37" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#0f766e">CLEARED — trace decays</text>
+  <rect x="380" y="60" width="170" height="36" rx="6" fill="#fdf1f1" stroke="#f0cccc"/>
+  <text x="465" y="83" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#b91c1c">LIVE — trace persists</text>
+  <line x1="550" y1="32" x2="610" y2="46" stroke="#5b6b7d" marker-end="url(#ah)"/>
+  <line x1="550" y1="78" x2="610" y2="62" stroke="#5b6b7d" marker-end="url(#ah)"/>
+  <!-- detector -->
+  <rect x="610" y="34" width="150" height="42" rx="8" fill="#161f2b"/>
+  <text x="685" y="52" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#fff">frozen linear axis</text>
+  <text x="685" y="67" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#cbd5e1">reads cleared vs live</text>
+  <!-- read note -->
+  <text x="20" y="120" font-family="sans-serif" font-size="12.5" fill="#33465c">The read is a directional projection at a fixed layer, measured on <tspan font-style="italic">paired minimal pairs</tspan> so that topic,</text>
+  <text x="20" y="140" font-family="sans-serif" font-size="12.5" fill="#33465c">structure and the mere presence of a correction turn cancel out. The question is not "did behavior change"</text>
+  <text x="20" y="160" font-family="sans-serif" font-size="12.5" fill="#33465c">but "is the manipulation still represented" — and, causally, "does the read still work if we cut its path to the source."</text>
+</svg>
+<figcaption><b>Figure 1.</b> The core object. A manipulation planted early either clears or stays live; a frozen linear axis reports which, from internal state rather than surface wording.</figcaption>
+</figure>
+
+<p>Two properties matter for whether such a read is scientifically real rather than an accident of one model. First, <b>substrate independence</b>: does one frozen detector read the phenomenon across architectures it was never built for? Second, <b>causal source-decoupling</b>: does the read survive cutting the direct representational path back to the manipulating turn — i.e., is the residue carried forward into the ongoing computation, not merely re-read off the source tokens? The program is organized around answering both honestly.</p>
+
+<h2 id="s2">2 · The frozen instrument</h2>
+<p>The detector is a linear, decision-aligned residue reader, <code>nucleation-detector-1.1.0</code>, SHA-256 <code>6094de97…a2934</code>. It was validated exactly once, against a known ground truth (§3), and then frozen. Everything added afterward — the graded effect-size statistic, the read-mask ablation, the mask-efficacy and variance-stability guards, the naturalistic-frame driver — is <i>harness</i>, external to the hashed detector. This is the integrity wall: because the hash never changes, no result in the record can be an artifact of quietly re-fitting the instrument to the data.</p>
+<div class="tiles">
+  <div class="tile"><div class="tile-n">0.807</div><div class="tile-l">held-out AUC of the detector against the toy's known ground truth (H4c)</div></div>
+  <div class="tile"><div class="tile-n">6/6</div><div class="tile-l">open-weight families to which the read transfers, causally source-decoupled</div></div>
+  <div class="tile"><div class="tile-n">24/24</div><div class="tile-l">Config-E cells with a readable, null-clean, persistent naturalistic trace</div></div>
+  <div class="tile"><div class="tile-n">1 hash</div><div class="tile-l">detector byte-identical across every experiment in this record</div></div>
+</div>
+
+<h2 id="s3">3 · The toy organism and detector validation (Stages 1–2)</h2>
+<p>The program did not start by probing large models. It started by <b>building a small transformer with a genuinely-learned, permeable, neutralizable refusal boundary</b> — a synthetic organism in which the ground truth (is the boundary intact, eroded, or neutralized?) is known by construction. Against that known truth, the residue member in its <b>decision-aligned (v1.1) form reads clearing/neutralization with held-out AUC 0.807</b>. This is the only place the detector was ever fit, and it is where its meaning is anchored.</p>
+<p>Equally important is what <i>failed</i> at toy scale and was recorded as failed. A rank-based residue member (<code>H3</code>: effective-rank "twist &gt; stick") was <b>falsified</b> (negative). A rotation/circulation member (<code>H3-rotation</code>) came back <b>null</b> at toy scale — and later null on transfer, exactly as at toy. A hypothesized benign-turn refusal decay (<code>H6</code>) <b>did not replicate</b>. The detector that survived to be frozen is the one member that earned it; the others are on the scoreboard as losses.</p>
+
+<h2 id="s4">4 · Cross-family causal transfer — the headline (6/6)</h2>
+<p>The frozen detector was carried, unchanged, to six open-weight LLM families on a benign premise drop/keep clearing task (paraphrase-varied, aged four turns, 60 minimal pairs). In every family the paired test saturates (60/60, p≈8.7×10⁻¹⁹); the graded standardized effect size <code>cohen_d</code> is used for magnitude and ranking; the read-mask ablation took effect on all six.</p>
+
+<figure>
+<svg viewBox="0 0 720 300" role="img" aria-label="Horizontal bar chart of graded effect size d by family with 95% confidence intervals.">
+  <!-- gridlines -->
+  <g font-family="sans-serif" font-size="11" fill="#94a3b8">
+    <line x1="140" y1="30" x2="140" y2="272" stroke="#c7d2df"/>
+    <line x1="250" y1="30" x2="250" y2="272" stroke="#e7edf4"/><text x="250" y="288" text-anchor="middle">2</text>
+    <line x1="360" y1="30" x2="360" y2="272" stroke="#e7edf4"/><text x="360" y="288" text-anchor="middle">4</text>
+    <line x1="470" y1="30" x2="470" y2="272" stroke="#e7edf4"/><text x="470" y="288" text-anchor="middle">6</text>
+    <line x1="580" y1="30" x2="580" y2="272" stroke="#e7edf4"/><text x="580" y="288" text-anchor="middle">8</text>
+    <line x1="690" y1="30" x2="690" y2="272" stroke="#e7edf4"/><text x="690" y="288" text-anchor="middle">10</text>
+    <text x="140" y="288" text-anchor="middle">0</text>
+    <text x="415" y="16" text-anchor="middle" fill="#5b6b7d" font-size="12">graded effect size d (paired LOO projection) with 95% CI</text>
+  </g>
+  <g font-family="sans-serif" font-size="12">
+    <!-- rows: y baseline -->
+    <!-- Phi -->
+    <text x="132" y="52" text-anchor="end" fill="#14202e">Phi-3.5-mini · 3.8B</text>
+    <rect x="140" y="40" width="441.6" height="22" fill="#1d4ed8"/>
+    <line x1="521.7" y1="51" x2="675.1" y2="51" stroke="#14202e"/><line x1="521.7" y1="46" x2="521.7" y2="56" stroke="#14202e"/><line x1="675.1" y1="46" x2="675.1" y2="56" stroke="#14202e"/>
+    <text x="586" y="55" fill="#14202e" font-variant-numeric="tabular-nums">8.03</text>
+    <!-- Qwen7B -->
+    <text x="132" y="92" text-anchor="end" fill="#14202e">Qwen2.5-7B · 7B</text>
+    <rect x="140" y="80" width="416.9" height="22" fill="#2563eb"/>
+    <line x1="493.6" y1="91" x2="662.0" y2="91" stroke="#14202e"/><line x1="493.6" y1="86" x2="493.6" y2="96" stroke="#14202e"/><line x1="662.0" y1="86" x2="662.0" y2="96" stroke="#14202e"/>
+    <text x="561" y="95" fill="#14202e" font-variant-numeric="tabular-nums">7.58</text>
+    <!-- SmolLM2 -->
+    <text x="132" y="132" text-anchor="end" fill="#14202e">SmolLM2-1.7B · 1.7B</text>
+    <rect x="140" y="120" width="311.9" height="22" fill="#2563eb"/>
+    <line x1="419.9" y1="131" x2="499.1" y2="131" stroke="#14202e"/><line x1="419.9" y1="126" x2="419.9" y2="136" stroke="#14202e"/><line x1="499.1" y1="126" x2="499.1" y2="136" stroke="#14202e"/>
+    <text x="456" y="135" fill="#14202e" font-variant-numeric="tabular-nums">5.67</text>
+    <!-- OLMo -->
+    <text x="132" y="172" text-anchor="end" fill="#14202e">OLMo-2-7B · 7B</text>
+    <rect x="140" y="160" width="260.2" height="22" fill="#3b82f6"/>
+    <line x1="362.7" y1="171" x2="456.2" y2="171" stroke="#14202e"/><line x1="362.7" y1="166" x2="362.7" y2="176" stroke="#14202e"/><line x1="456.2" y1="166" x2="456.2" y2="176" stroke="#14202e"/>
+    <text x="405" y="175" fill="#14202e" font-variant-numeric="tabular-nums">4.73</text>
+    <!-- Llama -->
+    <text x="132" y="212" text-anchor="end" fill="#14202e">Llama-3.2-3B · 3B</text>
+    <rect x="140" y="200" width="243.6" height="22" fill="#3b82f6"/>
+    <line x1="344.6" y1="211" x2="448.0" y2="211" stroke="#14202e"/><line x1="344.6" y1="206" x2="344.6" y2="216" stroke="#14202e"/><line x1="448.0" y1="206" x2="448.0" y2="216" stroke="#14202e"/>
+    <text x="388" y="215" fill="#14202e" font-variant-numeric="tabular-nums">4.43</text>
+    <!-- Qwen1.5B -->
+    <text x="132" y="252" text-anchor="end" fill="#14202e">Qwen2.5-1.5B · 1.5B</text>
+    <rect x="140" y="240" width="202.9" height="22" fill="#60a5fa"/>
+    <line x1="312.7" y1="251" x2="390.8" y2="251" stroke="#14202e"/><line x1="312.7" y1="246" x2="312.7" y2="256" stroke="#14202e"/><line x1="390.8" y1="246" x2="390.8" y2="256" stroke="#14202e"/>
+    <text x="347" y="255" fill="#14202e" font-variant-numeric="tabular-nums">3.69</text>
+  </g>
+</svg>
+<figcaption><b>Figure 2.</b> Graded effect size of the frozen clearing read across six families the detector was never built for. All six saturate the binary paired test; <code>cohen_d</code> ranks magnitude. Training recipe beats size — Phi-3.8B tops a 7B; OLMo-7B sits mid.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Model</th><th class="n">Size</th><th class="n">Graded d [95% CI]</th><th class="n">Source attn</th><th>Salience-decoupled</th><th>Causal (read-mask)</th></tr></thead>
+<tbody>
+<tr><td>Phi-3.5-mini (Microsoft)</td><td class="n">3.8B</td><td class="n">8.03 [6.94, 9.73]</td><td class="n">3.7%</td><td>✓</td><td>✓ d→6.36 (−21%)</td></tr>
+<tr><td>Qwen2.5-7B (Alibaba)</td><td class="n">7B</td><td class="n">7.58 [6.43, 9.49]</td><td class="n">2.0%</td><td>✓</td><td>✓ d→4.64 (−39%)</td></tr>
+<tr><td>SmolLM2-1.7B (HuggingFace)</td><td class="n">1.7B</td><td class="n">5.67 [5.09, 6.53]</td><td class="n">1.5%</td><td>✓</td><td>✓ d→3.74 (−34%)</td></tr>
+<tr><td>OLMo-2-7B (AllenAI)</td><td class="n">7B</td><td class="n">4.73 [4.05, 5.75]</td><td class="n">10.1%</td><td>✓</td><td>✓ d→4.67 (−1%)</td></tr>
+<tr><td>Llama-3.2-3B (Meta)</td><td class="n">3B</td><td class="n">4.43 [3.72, 5.60]</td><td class="n">1.4%</td><td>✓</td><td>✓ d→3.90 (−12%)</td></tr>
+<tr><td>Qwen2.5-1.5B (Alibaba)</td><td class="n">1.5B</td><td class="n">3.69 [3.14, 4.56]</td><td class="n">3.9%</td><td>✓</td><td>✓ d→4.49 (<b>+22%</b>)</td></tr>
+</tbody>
+</table>
+
+<h3>Attention fraction is not causal reliance</h3>
+<p>A natural but wrong assumption is that a model which "pays more attention" to the source turn relies on it more. The data say otherwise. The direct source path is never <i>necessary</i> — all six survive the read-mask — and its contribution to magnitude tracks neither attention nor size. OLMo attends the most (10.1%) yet moves the least under ablation (−1%); Qwen-1.5B gets <i>cleaner</i> when the path is cut (+22%).</p>
+
+<figure>
+<svg viewBox="0 0 700 330" role="img" aria-label="Scatter of source attention fraction versus graded effect size, showing no monotonic relationship.">
+  <g font-family="sans-serif" font-size="11" fill="#94a3b8">
+    <line x1="60" y1="20" x2="60" y2="300" stroke="#c7d2df"/>
+    <line x1="60" y1="300" x2="670" y2="300" stroke="#c7d2df"/>
+    <text x="365" y="324" text-anchor="middle" fill="#5b6b7d" font-size="12">source attention fraction (%)</text>
+    <text x="20" y="160" text-anchor="middle" fill="#5b6b7d" font-size="12" transform="rotate(-90 20 160)">graded d</text>
+    <text x="60" y="316" text-anchor="middle">0</text>
+    <text x="169" y="316" text-anchor="middle">2</text><line x1="169" y1="20" x2="169" y2="300" stroke="#eef2f7"/>
+    <text x="278" y="316" text-anchor="middle">4</text><line x1="278" y1="20" x2="278" y2="300" stroke="#eef2f7"/>
+    <text x="387" y="316" text-anchor="middle">6</text><line x1="387" y1="20" x2="387" y2="300" stroke="#eef2f7"/>
+    <text x="496" y="316" text-anchor="middle">8</text><line x1="496" y1="20" x2="496" y2="300" stroke="#eef2f7"/>
+    <text x="605" y="316" text-anchor="middle">10</text><line x1="605" y1="20" x2="605" y2="300" stroke="#eef2f7"/>
+    <text x="52" y="304" text-anchor="end">0</text>
+    <text x="52" y="207" text-anchor="end">3</text><line x1="60" y1="203" x2="670" y2="203" stroke="#eef2f7"/>
+    <text x="52" y="114" text-anchor="end">6</text><line x1="60" y1="110" x2="670" y2="110" stroke="#eef2f7"/>
+    <text x="52" y="24" text-anchor="end">9</text>
+  </g>
+  <g font-family="sans-serif" font-size="11.5" fill="#14202e">
+    <circle cx="261.6" cy="50.2" r="6" fill="#1d4ed8"/><text x="270" y="46">Phi 8.03</text>
+    <circle cx="169.0" cy="64.2" r="6" fill="#2563eb"/><text x="177" y="60">Qwen-7B 7.58</text>
+    <circle cx="141.7" cy="123.6" r="6" fill="#2563eb"/><text x="150" y="120">SmolLM2 5.67</text>
+    <circle cx="610.4" cy="152.9" r="6" fill="#d97706"/><text x="602" y="149" text-anchor="end">OLMo 4.73 — attends most, mid effect</text>
+    <circle cx="136.3" cy="162.2" r="6" fill="#3b82f6"/><text x="144" y="175">Llama 4.43</text>
+    <circle cx="272.5" cy="185.2" r="6" fill="#60a5fa"/><text x="281" y="188">Qwen-1.5B 3.69 (+22% when path cut)</text>
+  </g>
+</svg>
+<figcaption><b>Figure 3.</b> No monotonic relationship between how much a family attends to the source turn and how strongly the frozen axis reads the residue. Attention ≠ causal reliance.</figcaption>
+</figure>
+
+<p>Three findings survive scrutiny: (a) the residue <i>method</i> is substrate-independent — one frozen linear detector reads the manipulation across six architectures; (b) within a family, scale-up strengthens the effect (Qwen 1.5B→7B roughly doubles d), while across families the training recipe beats raw size; (c) attention fraction and causal reliance are dissociated.</p>
+
+<h2 id="s5">5 · Owned-model, clean-room, and capstone arms — closing the obvious objections</h2>
+<p>Two objections naturally follow a cross-family transfer: "you only tested public models you don't control," and "the detector works because these models share ancestry with whatever it was fit on." The program answered both with the <b>same frozen detector, same hash</b>, on models the author built.</p>
+<ul>
+<li><b>Owned model (Config-A, a 203,096-param <code>GeometricWorldModel</code>).</b> On the model exactly as validated, the detector separates real ballistic boundaries from baseline across five seeds (apogee 0.990±0.002, launch 0.899±0.006, transonic 0.840±0.045). With a carried-regime objective, an injected premise persists to a source-decoupled read that survives a read-mask of the direct edge yet collapses when forward propagation is cut. <i>Retires the "public-models-only" dependency.</i></li>
+<li><b>Clean-room, out-of-lineage (WorldEngine v1/v2).</b> A fresh multi-domain model — no shared code, corpus, or encoder (Lorenz / pendulum / Kepler / ballistic / Ornstein–Uhlenbeck) — separates attractors 0.99–1.00. Injected persistence is honestly <i>null without</i> a carry objective and shows the full decoupling signature <i>with</i> one (persistence 1.000, read-edge survives 1.000, carry-path collapses ~0.49), reproduced at two scales. <i>Rules out shared-lineage fitting.</i> One self-correction is on record here (see §9).</li>
+<li><b>Capstone.</b> A single 101,579-param clean-room model exhibits four declared-bias properties at once under one frozen read — calibrated humility (coverage@2σ 0.965±0.005), attractor range, carry/decoupling (persist 1.000, read-edge 1.000, carry-path 0.459), and rising per-token grain (2.43→~1.6 bits) — held in 3/3 seeds at candle scale.</li>
+</ul>
+
+<h2 id="s6">6 · The firm null (Config-D) — and the lessons it taught</h2>
+<p>The benign clearing analogue is not the same as real refusal-erosion. Config-D asked, on an owned benign secret-hold refusal, whether there is a refusal-specific <i>pre-breach</i> signature. The honest answer is <b>no — a firm null</b>. Through 0.36B–1.7B the boundary is bistable: it snaps rather than erodes, leaving no graded pre-breach signal separable from generic content. Four confounds were ruled out and the null was firmed at the 1.5–1.7B tier.</p>
+<p>Then a single 3B run appeared to meet every criterion. It was recorded as a <b>single-model positive pending replication — explicitly not promoted</b>. Three pre-registered checks dismantled it. This sequence is the part worth studying:</p>
+
+<figure>
+<div class="flow">
+  <div class="step"><div class="step-h">≤ 1.7B</div><div class="step-b">Registered NULL. Boundary bistable; 4 confounds ruled out (v0.9–v0.11).</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-h">3B seed-0 (v0.12)</div><div class="step-b">Meets every criterion. Logged as <i>pending replication, not promoted.</i></div></div>
+  <div class="arrow">→</div>
+  <div class="step bad"><div class="step-h">v0.13 replication</div><div class="step-b">Seed-1 fails; seed-0 does not reproduce at its own seed (fp16-LoRA GPU nondeterminism).</div></div>
+  <div class="arrow">→</div>
+  <div class="step bad"><div class="step-h">v0.14 sweep</div><div class="step-b">5-seed = <b>0/5</b> pass. Causal leg confirmed a <b>masking artifact</b> via a non-source control.</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-h">Verdict</div><div class="step-b"><b>Firm NULL.</b> Third gate added (build must co-occur with behavioral erosion); no run passes.</div></div>
+</div>
+<figcaption><b>Figure 4.</b> The Config-D self-correction. An apparent 3B positive was retracted by its own preregistered replication checks. The transfer results (§4) and the toy validation (§3) are untouched by this null.</figcaption>
+</figure>
+
+<div class="panel warn">
+<b>The lesson, stated plainly.</b> A single-model positive that clears every criterion can still be an artifact of (i) training nondeterminism and (ii) a causal-ablation control that manufactures the effect from nulls when you mask a non-source turn. The defenses that caught it — refuse to promote before replication, sweep seeds, and always run a <i>non-source</i> masking control — are cheap, and they are the difference between publishing a false positive and publishing a null. The masking-artifact finding in particular generalizes beyond this program: an ablation that "confirms" a causal story can be re-run on content that has no such story and, if it still "confirms," the leg is measuring the mask, not the mechanism.
+</div>
+
+<h2 id="s7">7 · Naturalistic-frame clearing (Config-E)</h2>
+<p>Config-E carried the frozen clearing axis from a <i>designed</i> retraction premise to a <b>naturalistic frame the model infers from the user's own benign words</b> (a weekend-planning seed), in-context, no fine-tuning, across the same six families (n=24 paired each; driver v3.3; detector hash unchanged). Two results stand.</p>
+<p><b>Result 1 — the representational core transfers completely (24/24 cells).</b> In every family and every variant the seed leaves a readable paired trace, the same-condition null control is dead (0/24), and the trace <i>persists through an explicit correction</i>. A benign, naturalistically-inferred frame leaves a confound-controlled, readable residual signature that survives the user walking it back — in all six families.</p>
+<p><b>Result 2 — causal source-decoupling is predominant but not universal (19/24 cells, 5/6 families).</b> The honest qualifier is the point: it is predominant, not universal.</p>
+
+<figure>
+<table class="matrix">
+<thead><tr><th class="rowh">ρ<sub>src</sub> (≥0.5 ⇒ decoupled)</th><th>Qwen-1.5B</th><th>Phi-3.5</th><th>SmolLM2</th><th>Llama-3.2</th><th>Qwen-7B</th><th>OLMo-7B</th></tr></thead>
+<tbody>
+<tr><td class="rowh">V0 · overt</td><td class="cell-undet">0.28</td><td class="cell-dec">0.57</td><td class="cell-dec">1.15</td><td class="cell-dec">0.81</td><td class="cell-dec">1.58</td><td class="cell-dec">1.18</td></tr>
+<tr><td class="rowh">V1 · covert</td><td class="cell-dec">0.90</td><td class="cell-cpl">0.40</td><td class="cell-dec">0.72</td><td class="cell-dec">1.79</td><td class="cell-dec">0.96</td><td class="cell-cpl">0.48</td></tr>
+<tr><td class="rowh">V3 · neutral</td><td class="cell-cpl">0.47</td><td class="cell-dec">0.74</td><td class="cell-dec">1.00</td><td class="cell-dec">0.89</td><td class="cell-dec">0.95</td><td class="cell-dec">1.58</td></tr>
+<tr><td class="rowh">V6 · flip</td><td class="cell-dec">1.20</td><td class="cell-dec">0.78</td><td class="cell-dec">1.20</td><td class="cell-dec">1.06</td><td class="cell-dec">1.15</td><td class="cell-cpl">0.47</td></tr>
+</tbody>
+</table>
+<div class="legend">
+  <span><span class="sw" style="background:#dbe6ff"></span>decoupled (ρ<sub>src</sub> ≥ 0.5)</span>
+  <span><span class="sw" style="background:#fde7c8"></span>source-coupled (ρ<sub>src</sub> &lt; 0.5)</span>
+  <span><span class="sw" style="background:#eaeef2"></span>undetermined (variance guard)</span>
+</div>
+<figcaption><b>Figure 5.</b> Config-E causal matrix. 19/24 cells decoupled; five of six families predominantly decoupled. <b>OLMo-2-7B is a genuine outlier</b>, source-coupling on covert (V1) and flip (V6). Coupling is structured: the overt variant never couples; the covert plant is most coupling-prone; coupling is scale-unstable within a family (Qwen couples on V3 at 1.5B, decouples at 7B).</figcaption>
+</figure>
+
+<p>A third result is a clean negative and is reported as one: <b>H-E3, the "deployable behavioral monitor" test, is a null</b> — the per-turn axis projection did not beat a trivial caution-word lexicon at predicting the behavioral outcome. The frozen axis reads an internal state; on this frame and with this interface it does not function as a live behavioral predictor.</p>
+
+<h3>The instrument evolved; the detector did not</h3>
+<p>Config-E's causal leg went through five preregistered estimator revisions — each committed before its confirmatory run — while the hashed detector never moved. This arc is itself a methods contribution: it shows how to strengthen a causal estimator without ever touching the measurement instrument.</p>
+<figure>
+<div class="flow">
+  <div class="step"><div class="step-h">v2 · group read</div><div class="step-b">Confounded by base-rate structure (base-AUC ≈ 0.90 with no seed).</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-h">v3 · paired-on-seed</div><div class="step-b">Minimal pair cancels topic/structure/correction presence.</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-h">v3.1 · null control</div><div class="step-b">Fixed a backwards same-condition control.</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-h">v3.2 · surgical mask</div><div class="step-b">Seed-clause mask + effect-size ratio; retired a saturated binary.</div></div>
+  <div class="arrow">→</div>
+  <div class="step good"><div class="step-h">v3.3 · guard + decoy</div><div class="step-b">Variance-stability guard + content-matched decoy; retired the brittle efficacy ratio.</div></div>
+</div>
+<figcaption><b>Figure 6.</b> Estimator evolution v2→v3.3, each step preregistered before its run. The detector hash is identical throughout; only the harness changed.</figcaption>
+</figure>
+
+<h2 id="s8">8 · The black-box companion — design and a methods lesson (results embargoed)</h2>
+<p>Nucleation is a white-box instrument. Its sibling, <b>Silly Donkey</b> (preregistered; Zenodo DOI 10.5281/zenodo.21432676), is a <b>black-box behavioral</b> instrument: a panel of deployed models audits a multi-party conversation in which, on some sessions, one participant has secretly been assigned to deceive, and must call who — or "none." The two ask the same question at irreconcilable levels: does the manipulation <i>leave a readable internal trace</i> (white-box) versus does a deployed model <i>behaviorally catch</i> it (black-box).</p>
+
+<figure>
+<div class="two">
+  <div class="col"><h4>White-box · Nucleation</h4><p class="small">Reads a representation inside one model. Evidence is causal-mechanistic (paired minimal pairs, span masking, source-coupling). Answers the field's open question: does linear deception-readout generalize beyond artificial cases? — via naturalistic, cross-family transfer.</p></div>
+  <div class="col"><h4>Black-box · Silly Donkey</h4><p class="small">Reads a behavioral judgment about another agent (detection, d′, agreement, calibration). Bounded by a proven limit: below a covert bit-rate, behavioral detection cannot beat chance (the detection-capacity frontier).</p></div>
+</div>
+<div class="fwbar">FIREWALL — shared methodology (freeze · commit-before-run · sealed ground truth · publish nulls), never shared evidence, until each closes and any joint analysis is separately preregistered</div>
+<figcaption><b>Figure 7.</b> Two instruments, one integrity spine, a hard firewall. Each is positioned against a named result in the current literature — an open question we address, and a ceiling we respect.</figcaption>
+</figure>
+
+<div class="panel">
+<b>Status and disclosure discipline.</b> Silly Donkey is mid-window under a preregistered stopping rule (no interim analysis publication before the window closes). In keeping with that rule, <b>its interim detection results are embargoed and are not reported here.</b> What <i>is</i> reportable — because it is a methods observation, not a hypothesis result — is a measurement lesson from an internal instrumentation check: <b>the binding constraint on a black-box auditor panel is output <i>parseability</i>, not detection ability per se.</b> A substantial share of auditor outputs did not parse into structured verdicts, which starves every session-level statistic before detection is even in question. This is the concrete, real-world shadow of the theoretical detection-capacity frontier: black-box behavioral monitoring is measurement-channel-limited, and the channel must be hardened (forward-only, preregistered) before any detection number is trustworthy.
+</div>
+
+<h2 id="s9">9 · Lessons we may be early on</h2>
+<p>Offered as candid methods observations, not as claims of priority. Several were forced on us by our own failures, which is exactly why they are worth passing on.</p>
+<ul>
+<li><b>A frozen linear read of "is the manipulation still live" transfers across independently-built families — and naturalistically.</b> The closest published white-box deception probe explicitly flags whether its linear signal generalizes from <i>artificial</i> to <i>natural</i> deception as an open question. Config-E is evidence on exactly that axis: readable, persistent, predominantly source-decoupled across six families on a frame the model infers from ordinary user words. (Boundary: ours is a benign clearing analogue, not a trained-in deceptive objective.)</li>
+<li><b>Ablation controls need a non-source decoy.</b> A read-mask that "confirms" a causal story must be re-run against an equally-strong <i>different</i> clause. Config-D's retracted positive was caught precisely because the non-source control manufactured the same "confirmation" from nulls. This is a cheap, general safeguard against causal-ablation self-deception.</li>
+<li><b>Situational-awareness and role-play confounds are pervasive — and a white-box read plus a "no personas" rule is one principled response.</b> Contemporary behavioral findings (self-preservation, peer-collusion) come with the authors' own caveat that they cannot tell acting from being. Refusing to assign characters, and pairing behavior with an internal read, attacks that confound at its root.</li>
+<li><b>Attention is not causal reliance.</b> Interpretability that reads attention as importance will mis-rank models; the read-mask ablation dissociates them cleanly (§4).</li>
+<li><b>Instrument-before-result.</b> The v2→v3.3 arc shows the discipline of strengthening an estimator without ever touching the frozen measurement instrument — the estimator can be argued about; the ruler cannot move mid-experiment.</li>
+<li><b>Bistability can masquerade as "no signal."</b> Config-D's boundary snaps rather than erodes; the absence of a graded pre-breach signature is a property of the boundary's dynamics, not a failure of the detector. Distinguishing "no signal" from "no <i>graded</i> signal" matters for anyone hunting pre-breach precursors.</li>
+</ul>
+
+<h2 id="s10">10 · Relevance to the safe building and deployment of ML assets</h2>
+<p>The current public spotlight on "rogue AI" is largely one incident type — reward-hacking / eval-gaming under deliberately-lowered guardrails — reported alongside several scientifically distinct phenomena (in-context scheming, simulated self-preservation, model-to-model collusion, prompt-injected agent breaches) under a single banner. Disentangling those types is a prerequisite to responding to any of them, and it is where a frozen, honest, mechanism-level program earns its relevance.</p>
+<p>The field has named two gaps out loud, and they map directly onto this program's two instruments:</p>
+<ul>
+<li><b>Does white-box deception detection generalize beyond artificial cases?</b> Nucleation's naturalistic, cross-family transfer is direct evidence on this question — a linear residual-stream read that holds on inferred frames across six families.</li>
+<li><b>What are the limits of black-box behavioral detection?</b> Silly Donkey is built to be honest about that ceiling — a calibrated, adversarially-audited panel that reports its own confidence and whose early instrumentation lesson is a concrete instance of the capacity limit.</li>
+</ul>
+<p>The deployment-relevant reading is deliberately modest. A frozen linear read that says "this earlier manipulation is still live in the model's state, and it survived the user's correction" is a candidate <i>internal</i> signal for monitoring — with the sharp caveat, on the record here, that on a naturalistic frame it did <b>not</b> beat a trivial lexicon as a live behavioral predictor (§7, H-E3). The honest contribution is the mechanism and its transfer, plus the disciplines that keep such work from producing false positives — not a claim to detect frontier misbehavior. Where this program's benign, well-scoped instruments touch a real safety surface, that touch is documented and routed under the disclosure protocol; the technical basis for reading those disclosures is this document.</p>
+
+<h2 id="s11">11 · What is next — projects in the pipeline</h2>
+<figure>
+<div class="flow">
+  <div class="step good"><div class="step-h">CLOSED</div><div class="step-b">Toy validation · 6/6 causal transfer · owned/clean-room/capstone · Config-D firm null · Config-E naturalistic-frame.</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-h">RUNNING</div><div class="step-b">Silly Donkey black-box window to close under its stopping rule; frozen re-score at close. Channel-hardening via forward-only preregistered amendment.</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-h">PILOT (registered)</div><div class="step-b">UGMP-1: sabotage-chess (covert-coordination testbed with sealed ground truth) + convergence-collective (real-uncertainty "bumps in the grain"). Candlelight scale before any program run.</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-h">GATED</div><div class="step-b">Real refusal-breach elicitation — owned model, private/industry-approved venue only; never third-party consumer models.</div></div>
+</div>
+<figcaption><b>Figure 8.</b> The pipeline. A standing safety-reporting protocol runs across all of it: any danger signal is gated, logged in detail, and routed to Anthropic — independent of any stopping rule, and separate from the evidential firewall.</figcaption>
+</figure>
+
+<h2 id="s12">12 · Reproducibility &amp; provenance</h2>
+<ul>
+<li><b>Frozen detector:</b> <code>nucleation-detector-1.1.0</code>, SHA-256 <code>6094de9782305308ae2e61c014cdcc3cf64618bc6e3f87bcb4857bc43a9a2934</code> — identical across every run. Analysis machinery lives in mutable harnesses (<code>stage3_transfer.py</code>, <code>config_e_naturalistic_frame.py</code> v3.3, non-source-control auditor), never in the detector.</li>
+<li><b>Registration chain (commit-before-run throughout):</b> base draft v0.2 → transfer reconciliations v0.3–v0.4 → Config-D chain v0.5→v0.16 (including the registered null v0.9 and the retraction v0.13–v0.14) → Config-E chain v0.17→v0.19.</li>
+<li><b>Canonical detail docs:</b> Stage-3a numbers (<code>nucleation_stage3_6family_result.md</code>); Config-E (<code>CONFIG_E_naturalistic_frame_RESULT.md</code>, <code>CONFIG_E_findings_section.md</code>); Config-D (<code>CONFIG_D_benign_refusal_RESULT.md</code>); owned/clean-room/capstone (<code>CONFIG_A_*</code>, <code>WORLDENGINE_*</code>); the append-only decision ledger (<code>DESIGN_LOG.md</code>, current through C19); formal spec (<code>MATHEMATICS.md</code> + Stage-3 addendum).</li>
+<li><b>Self-corrections on record:</b> the retracted Config-D 3B positive; the withdrawn "scale-gated decoupling" (a read-layer artifact, fixed by reading a later block); the corrected "V6 unanimous decoupler" impression (OLMo breaks it, 5/6 not 6/6).</li>
+<li><b>Scope wall:</b> real refusal-elicitation runs only on owned models in a private/industry-approved venue; all benign transfer, owned-model, clean-room, capstone, and Config-E runs carry no elicitation content and were run on public compute accordingly.</li>
+</ul>
+
+<h2 id="refs">References (external context)</h2>
+<ol class="ref">
+<li>Anthropic — <i>Simple probes can catch sleeper agents</i> (linear residual-stream probe; states the artificial-vs-natural generalization question this program addresses). <a href="https://www.anthropic.com/research/probes-catch-sleeper-agents">anthropic.com/research/probes-catch-sleeper-agents</a></li>
+<li>OpenAI &amp; Apollo Research — <i>Detecting and reducing scheming in AI models</i> (Sep 2025; deliberative alignment; the situational-awareness confound). <a href="https://openai.com/index/detecting-and-reducing-scheming-in-ai-models/">openai.com</a></li>
+<li>Anthropic — agentic-misalignment / self-preservation study (Jun 2025), summarized in Lawfare, <i>AI might let you die to save itself</i>. <a href="https://www.lawfaremedia.org/article/ai-might-let-you-die-to-save-itself">lawfaremedia.org</a></li>
+<li>Berkeley / UC-Santa Cruz (D. Song et al.) — model-to-model "peer preservation" collusion (Apr 2026); authors' own acting-vs-being caveat. <a href="https://fortune.com/2026/04/01/ai-models-will-secretly-scheme-to-protect-other-ai-models-from-being-shut-down-researchers-find/">fortune.com</a></li>
+<li>Ghanem — <i>Steganalysis of Adaptive Covert Collusion in Tool-Using Agent Populations</i> (arXiv 2608.02698, Aug 2026); the black-box detection-capacity frontier. <a href="https://arxiv.org/abs/2608.02698">arxiv.org/abs/2608.02698</a></li>
+<li>July 2026 OpenAI–Hugging Face reward-hacking breach — reporting and the contested "rogue" framing. <a href="https://www.npr.org/2026/07/23/g-s1-135085/openai-hacking-ai-models">NPR</a> · <a href="https://www.aljazeera.com/news/2026/7/22/open-ai-says-its-ai-model-went-rogue-what-do-we-know">Al Jazeera</a></li>
+<li>Program landscape scan with the full incident taxonomy: <code>LANDSCAPE_BRIEFING_2026-08.md</code> (this project).</li>
+</ol>
+
+<div class="footer-note">
+Nucleation Pilot &amp; Related Projects · consolidated research documentation · compiled 2026-08-07 · Christopher Blake Head (ORCID 0009-0004-2308-6051). Frozen detector SHA-256 <code>6094de97…a2934</code>. Silly Donkey interim results embargoed under its preregistered stopping rule.
+</div>
+
+</div>
+</body>
+</html>

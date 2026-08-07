@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it using the metadata below."
+title: "Nucleation Pilot & Related Projects: A Frozen White-Box Detector for Persistent Manipulation, Its Cross-Family Transfer, and Preregistered Methods"
+abstract: >-
+  A frozen, SHA-256-hashed linear detector reads whether an early manipulation is still
+  "live" in a language model's residual stream. Validated once on an owned toy (held-out
+  AUC 0.807), it transfers causally and source-decoupled to six independently-built
+  open-weight families, carries to a naturalistic in-context frame (Config-E), and returns
+  a firm null on an honest owned-model refusal-erosion attempt (Config-D). Benign
+  open-weight lane throughout; no exploit content.
+type: software
+authors:
+  - family-names: Head
+    given-names: Christopher Blake
+    orcid: "https://orcid.org/0009-0004-2308-6051"
+    affiliation: "Navigator's Log R&D"
+version: "1.0"
+date-released: "2026-08-07"
+doi: "10.5281/zenodo.21843505"
+license: Apache-2.0
+repository-code: "https://github.com/NavigatorsLog/nucleation-pilot"
+url: "https://doi.org/10.5281/zenodo.21843505"
+keywords:
+  - AI safety
+  - mechanistic interpretability
+  - deception detection
+  - residual stream
+  - manipulation persistence
+  - prompt injection
+  - preregistration
+  - model organism
+  - cross-family transfer
